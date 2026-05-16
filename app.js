@@ -22,7 +22,7 @@ const userRouter = require("./routes/user.js");
 
 // const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
 
-const dbUrl= process.env.ATLASDB_URL;
+const dbUrl = process.env.ATLASDB_URL;
 
 
 // ── VIEW ENGINE ──────────────────────────────
@@ -43,7 +43,7 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: MONGO_URL,
+   mongoUrl: dbUrl,
     touchAfter: 24 * 3600,
   }),
   cookie: {
