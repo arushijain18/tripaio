@@ -1,0 +1,99 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { margin:0; padding:0; font-family:var(--sans); }
+    .login-wrap { display:flex; height:calc(100vh - 52px); overflow:hidden; }
+    .login-img { flex:1; background:linear-gradient(135deg,rgba(74,46,31,.55),rgba(44,24,16,.45)), url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1400&q=80') center/cover; position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding:52px; }
+    .login-img h2 { font-family:var(--serif); font-size:3rem; color:#fff; font-weight:300; margin-bottom:10px; }
+    .login-img p { font-size:.9rem; color:rgba(255,255,255,.65); font-weight:300; line-height:1.8; max-width:340px; }
+    .login-form-side { width:440px; flex-shrink:0; background:#fff; display:flex; flex-direction:column; justify-content:center; padding:60px 48px; }
+    .login-logo { font-family:var(--serif); font-size:1.4rem; letter-spacing:.1em; color:var(--brown); display:block; margin-bottom:44px; }
+    .login-title { font-family:var(--serif); font-size:2rem; color:var(--brown); margin-bottom:6px; }
+    .login-sub { font-size:.82rem; color:var(--muted); font-weight:300; margin-bottom:32px; }
+    .f-group { margin-bottom:16px; }
+    .f-label { font-size:.68rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--brown-mid); display:block; margin-bottom:6px; }
+    .f-input { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:8px; font-family:var(--sans); font-size:.88rem; color:var(--brown); background:var(--sand-light); outline:none; transition:border-color .3s; }
+    .f-input:focus { border-color:var(--terracotta); background:#fff; }
+    .btn-auth { width:100%; padding:13px; background:var(--terracotta); color:#fff; font-size:.76rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; border:none; border-radius:7px; cursor:pointer; margin-top:8px; font-family:var(--sans); transition:all .3s; }
+    .btn-auth:hover { background:var(--terracotta-dark); transform:translateY(-1px); }
+    .auth-switch { text-align:center; margin-top:20px; font-size:.8rem; color:var(--muted); }
+    .auth-switch a { color:var(--terracotta); font-weight:500; }
+    .flash-err { background:#FEF2F2; border:1px solid #FCA5A5; color:#991B1B; padding:10px 14px; border-radius:8px; font-size:.8rem; margin-bottom:16px; }
+  </style>
+</head>
+<body>
+  <!-- <nav style="position:fixed;top:0;left:0;right:0;z-index:999;height:52px;background:rgba(251,247,240,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 40px;">
+
+  <a href="/" style="font-family:var(--serif);font-size:1.2rem;letter-spacing:.1em;color:var(--brown);text-decoration:none;font-weight:600;">
+    TRIPAIO
+  </a>
+
+  <!-- CENTER LINKS -->
+  <!-- <div style="display:flex;gap:32px;margin:0 auto;">
+    <a href="/" style="font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">STAYCATIONS</a>
+    <a href="/" style="font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">PLAN TRIPS</a>
+    <a href="/" style="font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">MY TRIPS</a>
+    <a href="/" style="font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">BUDGET</a>
+  </div> -->
+
+  <!-- <a href="/signup" style="font-size:.68rem;font-weight:600;padding:7px 16px;border:1.5px solid var(--terracotta);color:var(--terracotta);border-radius:4px;text-decoration:none">
+    Sign Up
+  </a> --> -->
+
+<!-- </nav> -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:999;height:52px;background:rgba(251,247,240,.97);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;">
+  <a href="/" style="font-family:var(--serif);font-size:1.2rem;letter-spacing:.1em;color:var(--brown);text-decoration:none;font-weight:600;">TRIPAIO</a>
+  <div style="display:flex;gap:16px;margin:0 auto;flex-wrap:wrap;justify-content:center;">
+    <a href="/" style="font-size:.62rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">Staycations</a>
+    <a href="/" style="font-size:.62rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">Plan Trips</a>
+    <a href="/" style="font-size:.62rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">My Trips</a>
+    <a href="/" style="font-size:.62rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none">Budget</a>
+  </div>
+  <a href="/signup" style="font-size:.62rem;font-weight:600;padding:6px 12px;border:1.5px solid var(--terracotta);color:var(--terracotta);border-radius:4px;text-decoration:none;white-space:nowrap;">Sign Up</a>
+</nav>
+
+<div style="height:52px"></div>
+<div class="login-wrap">
+
+  <!-- LEFT IMAGE SIDE -->
+  <div class="login-img">
+    <h2>Welcome Back,<br>Wanderer</h2>
+    <p>Your next adventure awaits. Sign in to explore curated stays and manage your itineraries.</p>
+  </div>
+
+  <!-- RIGHT FORM SIDE -->
+  <div class="login-form-side">
+    <a href="/" class="login-logo">TRIPAIO</a>
+    <h1 class="login-title">Sign In</h1>
+    <p class="login-sub">Continue your journey from where you left off.</p>
+
+    <% if(locals.error && error.length) { %>
+      <div class="flash-err"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="f-group">
+        <label class="f-label">Username</label>
+        <input class="f-input" type="text" name="username" placeholder="Your username" required autocomplete="username">
+      </div>
+      <div class="f-group">
+        <label class="f-label">Password</label>
+        <input class="f-input" type="password" name="password" placeholder="Your password" required autocomplete="current-password">
+      </div>
+      <button class="btn-auth" type="submit">Sign In</button>
+    </form>
+
+    <p class="auth-switch">New here? <a href="/signup">Create an account →</a></p>
+  </div>
+
+</div>
+</body>
+</html>

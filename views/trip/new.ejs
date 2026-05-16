@@ -1,0 +1,12 @@
+<% layout('layouts/boilerplate') %>
+<div class="container my-5" style="max-width:550px">
+  <h3>Plan Your Trip ✈️</h3>
+  <form action="/trip/generate-ai" method="POST" class="mt-4">
+    <input type="text"   name="destination" placeholder="Destination (e.g. Bali)" class="form-control mb-3" required>
+    <input type="number" name="days"        placeholder="Number of days"           class="form-control mb-3" required>
+    <input type="number" name="people"      placeholder="Number of people"         class="form-control mb-3" required>
+    <input type="number" name="budget"      placeholder="Total budget in USD"      class="form-control mb-3" required>
+    <input type="text"   name="interests"   placeholder="Interests (food, beach…)" class="form-control mb-3" required>
+    <button class="btn btn-success w-100">Generate ✨</button>
+  </form>
+</div>

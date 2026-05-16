@@ -1,0 +1,165 @@
+
+ <% layout('layouts/boilerplate') %>
+
+<!-- Banner with search -->
+<div class="listings-banner">
+  <h1>
+    <% if(selectedCategory && selectedCategory !== 'All') { %>
+      <%= selectedCategory.toUpperCase() %> STAYS
+    <% } else if(q) { %>
+      Results for "<%= q %>"
+    <% } else { %>
+      EXPLORE STAYS
+    <% } %>
+  </h1>
+
+  <!-- Search Bar -->
+  <div style="position:relative;max-width:520px;margin:20px auto 0">
+    <form action="/listings" method="GET" id="searchForm">
+      <div style="position:relative">
+        <i class="fas fa-search" style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem"></i>
+        <input
+          type="text"
+          name="q"
+          id="searchInput"
+          value="<%= typeof q !== 'undefined' ? q : '' %>"
+          placeholder="Search by country or staycation name..."
+          autocomplete="off"
+          style="width:100%;padding:13px 16px 13px 42px;border:none;border-radius:8px;font-family:var(--sans);font-size:.88rem;color:var(--brown);outline:none;box-shadow:0 4px 20px rgba(0,0,0,.15)"
+        >
+      </div>
+      <!-- Suggestions dropdown -->
+      <div id="suggestions" style="position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(74,46,31,.15);z-index:200;display:none;overflow:hidden;border:1px solid var(--border)"></div>
+    </form>
+  </div>
+
+
+  <form method="GET" action="/listings" style="position:absolute;right:40px;bottom:48px;">
+  <input type="hidden" name="q" value="<%= q %>">
+  <select name="sort" onchange="this.form.submit()" 
+    style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; cursor: pointer;">
+   <!-- <option value="" <%= sort === "" ? "selected" : "" %>>Default</option> -->
+    <option value="" disabled selected>Sort by Price</option>
+    <option value="low" <%= sort === "low" ? "selected" : "" %>>Price: Low to High</option>
+    <option value="high" <%= sort === "high" ? "selected" : "" %>>Price: High to Low</option>
+  </select>
+</form>
+ 
+
+  <!-- Tax toggle right side -->
+  <div style="position:absolute;right:40px;bottom:20px;display:flex;align-items:center;gap:7px">
+    <input type="checkbox" id="taxToggle" style="accent-color:var(--terracotta);width:14px;height:14px">
+    <label for="taxToggle" style="font-size:.72rem;color:rgba(255,255,255,.7);cursor:pointer">Display Total after Taxes</label>
+  </div>
+</div>
+
+ 
+
+<!-- Listings Grid -->
+<div class="listings-grid">
+  <% if(listings && listings.length) { %>
+    <% for(let l of listings) { %>
+      <div class="l-card">
+        <div class="l-card-img">
+          <img src="<%= l.image.url %>" alt="<%= l.title %>" loading="lazy">
+          <% if(l.category) { %><span class="l-card-badge"><%= l.category %></span><% } %>
+        </div>
+        <div class="l-card-body">
+          <p class="l-card-loc"><%= l.location %>, <%= l.country %></p>
+          <h3 class="l-card-title"><%= l.title %></h3>
+          <div class="l-card-footer">
+            <div class="l-card-price">
+              <b>₹<%= l.price.toLocaleString('en-IN') %></b><span> / night</span>
+              <span class="usd" style="font-size:.67rem;color:var(--muted);display:block">$<%= (l.price * rate).toFixed(2) %></span>
+              <span class="tax" style="font-size:.67rem;color:var(--muted);display:none">+18% GST</span>
+            </div>
+            <a href="/listings/<%= l._id %>" class="btn-explore">Explore</a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  <% } else { %>
+    <div class="empty-state" style="grid-column:1/-1">
+      <p>No stays found</p>
+      <a href="/listings" class="btn-primary">Browse All</a>
+    </div>
+  <% } %>
+</div>
+
+<!-- Pagination -->
+<% if(typeof totalPages !== 'undefined' && totalPages > 1) { %>
+  <div class="pagination">
+    <% if(currentPage > 1) { %>
+      <a href="?page=<%= currentPage-1 %>&q=<%= q||'' %>" class="page-btn">← Prev</a>
+    <% } %>
+    <% for(let i=1; i<=totalPages; i++) { %>
+      <a href="?page=<%= i %>&q=<%= q||'' %>" class="page-btn <%= i===currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+    <% if(currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage+1 %>&q=<%= q||'' %>" class="page-btn">Next →</a>
+    <% } %>
+  </div>
+<% } %>
+
+<script>
+  // Tax toggle
+  document.getElementById('taxToggle').addEventListener('change', function() {
+    document.querySelectorAll('.tax').forEach(el => el.style.display = this.checked ? 'block' : 'none');
+    document.querySelectorAll('.usd').forEach(el => el.style.display = this.checked ? 'none' : 'block');
+  });
+
+  // Search autofill
+  const input = document.getElementById('searchInput');
+  const box = document.getElementById('suggestions');
+  let timer;
+
+  input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = input.value.trim();
+    if (!q) { box.style.display = 'none'; return; }
+    timer = setTimeout(async () => {
+      const res = await fetch(`/listings/search/suggestions?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!data.length) { box.style.display = 'none'; return; }
+      box.innerHTML = data.map(item => {
+        if (item.type === 'country') {
+          return `<div class="sug-item" onclick="goTo('/listings/country/${encodeURIComponent(item.country)}')">
+            <i class="fas fa-globe" style="color:var(--terracotta);margin-right:8px;font-size:.8rem"></i>
+            <span style="font-size:.85rem;color:var(--brown)">${item.country}</span>
+            <span style="font-size:.72rem;color:var(--muted);margin-left:auto">Country</span>
+          </div>`;
+        } else {
+          return `<div class="sug-item" onclick="goTo('/listings/${item.id}')">
+            <i class="fas fa-home" style="color:var(--muted);margin-right:8px;font-size:.8rem"></i>
+            <span style="font-size:.85rem;color:var(--brown)">${item.title}</span>
+            <span style="font-size:.72rem;color:var(--muted);margin-left:auto">Stay</span>
+          </div>`;
+        }
+      }).join('');
+      box.style.display = 'block';
+    }, 280);
+  });
+
+  function goTo(url) {
+    box.style.display = 'none';
+    window.location.href = url;
+  }
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#searchForm')) box.style.display = 'none';
+  });
+
+  document.querySelectorAll('.l-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const link = card.querySelector('.btn-explore');
+      if (link) window.location.href = link.href;
+    });
+  });
+</script>
+
+<style>
+  .listings-banner { position:relative; }
+  .sug-item { padding:11px 16px; cursor:pointer; display:flex; align-items:center; border-bottom:1px solid var(--border); transition:background .2s; }
+  .sug-item:last-child { border-bottom:none; }
+  .sug-item:hover { background:var(--sand-light); }
+</style>

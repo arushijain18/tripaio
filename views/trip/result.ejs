@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Itinerary — TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <style>
+    body { margin:0; background:var(--sand-light); }
+
+    /* NAV */
+.result-nav { display:flex; align-items:center; height:60px; padding:0 40px; background:var(--sand-light); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:999; }
+.result-nav .logo { font-family:var(--serif); font-size:1.3rem; letter-spacing:.1em; color:var(--brown); font-weight:600; text-decoration:none; margin-right:auto; }
+.result-nav .links { display:flex; gap:24px; position:absolute; left:50%; transform:translateX(-50%); }
+.result-nav .links a { font-size:.68rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-decoration:none; }
+.result-nav .links a:hover { color:var(--terracotta); }
+.result-nav .logout { font-size:.68rem; font-weight:600; padding:7px 16px; border:1.5px solid var(--terracotta); color:var(--terracotta); border-radius:4px; text-decoration:none; margin-left:auto; }
+.result-nav .logout:hover { background:var(--terracotta); color:#fff; }
+
+    /* BANNER */
+    .result-banner { background:linear-gradient(135deg,var(--brown),var(--brown-mid)); padding:36px 48px; }
+    .result-banner span { font-size:.6rem; letter-spacing:.25em; color:var(--gold); text-transform:uppercase; font-weight:600; display:block; margin-bottom:8px; }
+    .result-banner h1 { font-family:var(--serif); font-size:2.4rem; color:#fff; font-weight:300; margin:0 0 8px; }
+    .result-banner h1 em { color:var(--gold); font-style:normal; }
+    .result-meta { display:flex; gap:20px; flex-wrap:wrap; margin-top:10px; }
+    .result-tag { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; background:rgba(255,255,255,.12); border-radius:20px; font-size:.7rem; color:rgba(255,255,255,.8); }
+    .result-tag i { color:var(--gold); font-size:.7rem; }
+
+    /* SCROLLABLE DAY CARDS */
+    .days-scroll-wrap { padding:40px 0 20px; }
+    .days-scroll-label { font-size:.62rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--terracotta); padding:0 48px; margin-bottom:16px; }
+    .days-scroll { display:flex; gap:16px; padding:0 40px 16px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:thin; }
+    .days-scroll { overflow-y: visible !important; }
+    .day-card { scroll-snap-align:start; }
+    .days-scroll::-webkit-scrollbar { height:4px; }
+    .days-scroll::-webkit-scrollbar-track { background:transparent; }
+    .days-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+    /* DAY CARD */
+    .day-card { flex:0 0 320px; font-size:1.05em; background:#fff; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:transform .3s; }
+    .day-card { overflow: visible !important; }
+    .day-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+    .day-card-img { height:150px; overflow:hidden; position:relative; background:linear-gradient(135deg,var(--brown),var(--brown-mid)); }
+    .day-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .day-badge { position:absolute; top:10px; left:10px; background:var(--terracotta); color:#fff; font-size:.58rem; font-weight:700; padding:4px 10px; border-radius:20px; letter-spacing:.06em; }
+    .day-card-body { padding:16px; }
+    .day-title { font-family:var(--serif); font-size:1.1rem; color:var(--brown); margin-bottom:10px; line-height:1.3; }
+    .day-badges { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+    .weather-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; background:var(--sand-light); border-radius:20px; font-size:.62rem; color:var(--brown-mid); font-weight:600; }
+    .cost-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; background:#F0FDF4; border-radius:20px; font-size:.62rem; color:#166534; font-weight:600; border:1px solid #86EFAC; }
+    .schedule-label { font-size:.58rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; display:block; }
+    .schedule-row { display:flex; gap:8px; align-items:flex-start; margin-bottom:8px; }
+    .schedule-icon { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.7rem; }
+    .schedule-text { font-size:.78rem; color:var(--brown-mid); font-weight:300; line-height:1.5; padding-top:4px; }
+    .places-label { font-size:.58rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin:12px 0 6px; display:block; }
+    .places-list { display:flex; flex-wrap:wrap; gap:5px; }
+    .place-tag { font-size:.68rem; padding:4px 10px; background:var(--sand-light); border-radius:20px; color:var(--terracotta); font-weight:500; cursor:pointer; border:1px solid var(--border); text-decoration:none; transition:all .2s; }
+    .place-tag:hover { background:var(--terracotta); color:#fff; border-color:var(--terracotta); }
+
+    /* TIPS + TOTAL */
+    .result-bottom { max-width:900px; margin:0 auto; padding:20px 48px 60px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .tips-box { background:#fff; border-radius:var(--radius); padding:24px; border:1px solid var(--border); }
+    .tips-box h3 { font-family:var(--serif); font-size:1.2rem; color:var(--brown); margin-bottom:10px; }
+    .tips-box p { font-size:.82rem; color:var(--brown-mid); font-weight:300; line-height:1.7; }
+    .total-box { background:linear-gradient(135deg,var(--terracotta),var(--brown-mid)); border-radius:var(--radius); padding:24px; text-align:center; }
+    .total-box span { font-size:.6rem; letter-spacing:.2em; color:rgba(255,255,255,.65); text-transform:uppercase; display:block; margin-bottom:6px; }
+    .total-box b { font-family:var(--serif); font-size:2.2rem; color:#fff; display:block; margin-bottom:16px; }
+    .btn-save { display:inline-block; padding:11px 28px; background:#fff; color:var(--terracotta); font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; border-radius:4px; cursor:pointer; border:none; font-family:var(--sans); transition:all .3s; }
+    .btn-save:hover { background:var(--sand); }
+    .btn-save-secondary { display:inline-block; padding:11px 28px; border:1.5px solid rgba(255,255,255,.5); color:#fff; font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; border-radius:4px; margin-left:8px; text-decoration:none; transition:all .3s; }
+    .btn-save-secondary:hover { background:rgba(255,255,255,.15); color:#fff; }
+
+    /* FOOTER */
+    .result-footer { background:var(--brown); padding:22px 40px; text-align:center; }
+    .result-footer p { color:rgba(245,230,200,.35); font-size:.72rem; }
+    .result-footer-socials { display:flex; justify-content:center; gap:14px; margin-bottom:8px; }
+    .result-footer-socials a { color:rgba(245,230,200,.3); font-size:.85rem; text-decoration:none; }
+    .result-footer-socials a:hover { color:var(--sand); }
+    [id^="map_"] { display:block; height:180px !important; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="result-nav">
+  <a href="/" class="logo">TRIPAIO</a>
+  <div class="links">
+    <a href="/listings">Staycations</a>
+    <a href="/trip/plan">Plan Trip</a>
+    <a href="/trip/saved">My Trips</a>
+    <a href="/trip/budget">Budget</a>
+  </div>
+  <% if(locals.currUser) { %>
+    <a href="/logout" class="logout">Logout</a>
+  <% } %>
+</nav>
+
+<!-- BANNER -->
+<div class="result-banner">
+  <span>Your AI-generated itinerary</span>
+  <h1>Trip to <em><%= destination %></em></h1>
+  <div class="result-meta">
+    <span class="result-tag"><i class="fas fa-calendar"></i> <%= days %> Days</span>
+    <span class="result-tag"><i class="fas fa-users"></i> <%= people %></span>
+    <span class="result-tag"><i class="fas fa-wallet"></i> ₹<%= budget %></span>
+  </div>
+</div>
+
+<!-- SCROLLABLE DAY CARDS -->
+<div class="days-scroll-wrap">
+  <span class="days-scroll-label">Daily Schedule</span>
+  <div class="days-scroll">
+    <% itinerary.days.forEach(day => { %>
+      <div class="day-card">
+
+        <!-- Card Image -->
+        <div class="day-card-img">
+          <% if(day.imageUrl) { %>
+            <img src="<%= day.imageUrl %>" alt="<%= day.title %>">
+          <% } %>
+          <span class="day-badge">Day <%= day.day %></span>
+        </div>
+
+        <div class="day-card-body">
+          <h3 class="day-title"><%= day.title %></h3>
+
+          <!-- Weather + Cost -->
+          <div class="day-badges">
+            <% if(day.weather) { %>
+              <span class="weather-tag">
+                <% if(day.weather.toLowerCase().includes('sun')) { %>☀️
+                <% } else if(day.weather.toLowerCase().includes('cloud')) { %>⛅
+                <% } else if(day.weather.toLowerCase().includes('rain')) { %>🌧️
+                <% } else { %>🌤️<% } %>
+                <%= day.weather %>
+              </span>
+            <% } %>
+            <% if(day.estimatedCost) { %>
+              <span class="cost-tag"><i class="fas fa-rupee-sign"></i> ₹<%= day.estimatedCost.toLocaleString('en-IN') %></span>
+            <% } %>
+          </div>
+
+          <!-- Schedule -->
+          <span class="schedule-label">Daily Schedule</span>
+          <% if(day.morning) { %>
+            <div class="schedule-row">
+              <div class="schedule-icon" style="background:#FEF9C3"><span>🌅</span></div>
+              <div class="schedule-text"><strong style="font-size:.7rem;color:var(--brown)">Morning</strong><br><%= day.morning %></div>
+            </div>
+          <% } %>
+          <% if(day.afternoon) { %>
+            <div class="schedule-row">
+              <div class="schedule-icon" style="background:#FEF3C7"><span>☀️</span></div>
+              <div class="schedule-text"><strong style="font-size:.7rem;color:var(--brown)">Afternoon</strong><br><%= day.afternoon %></div>
+            </div>
+          <% } %>
+          <% if(day.evening) { %>
+            <div class="schedule-row">
+              <div class="schedule-icon" style="background:#EDE9FE"><span>🌙</span></div>
+              <div class="schedule-text"><strong style="font-size:.7rem;color:var(--brown)">Evening</strong><br><%= day.evening %></div>
+            </div>
+          <% } %>
+
+          <!-- Places — clickable to Google Maps  -->
+       <% if(day.places && day.places.length) { %>
+  <span class="places-label">Places to Visit</span>
+  <div class="places-list">
+    <% for(let p of day.places) { %>
+      
+      <!-- <span 
+  class="place-tag"
+  onclick='loadMap(<%= day.day %>, `<%= p %>, <%= destination %>`, this)'
+  <i class="fas fa-map-pin" style="font-size:.6rem;margin-right:3px"></i>
+  <%= p %>
+</span> -->
+ <span class="place-tag" onclick='loadMap(<%= day.day %>, `<%= p %>, <%= destination %>`, this)'>
+  <%= p %>
+  <a 
+    href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(p + ', ' + destination) %>"
+    target="_blank"
+    onclick="event.stopPropagation()"
+    class="place-gmaps-icon"
+    title="Open in Google Maps"
+  >
+    <i class="fas fa-map-marker-alt"></i>
+  </a>
+</span>
+
+    <% } %>
+  </div>
+  <div id="map_<%= day.day %>"
+     style="height:180px; width:100%; margin-top:10px; border-radius:10px;">
+</div>
+<% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+
+<!-- TIPS + TOTAL COST -->
+<div class="result-bottom">
+  <% if(itinerary.tips) { %>
+    <div class="tips-box">
+      <h3>Travel Tips</h3>
+      <p><%= itinerary.tips %></p>
+    </div>
+  <% } %>
+  <div class="total-box">
+    <span>Total Estimated Cost</span>
+    <b>₹<%= itinerary.totalEstimatedCost ? itinerary.totalEstimatedCost.toLocaleString('en-IN') : 'N/A' %></b>
+    <form action="/trip/save" method="POST" style="display:inline">
+      <input type="hidden" name="destination" value="<%= destination %>">
+      <input type="hidden" name="days" value="<%= days %>">
+      <input type="hidden" name="people" value="<%= people %>">
+      <input type="hidden" name="budget" value="<%= budget %>">
+      <button class="btn-save" type="submit">Save Itinerary</button>
+    </form>
+    <a href="/trip/plan" class="btn-save-secondary">Plan Another</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="result-footer">
+  <div class="result-footer-socials">
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+  </div>
+  <p>© TripAIO Private Limited</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const GEO_KEY = <%- JSON.stringify(geoKey) %>;
+
+function loadMap(day, place, el) {
+  if (!GEO_KEY) {
+    console.error("❌ GEO_KEY is missing — maps won't load");
+    return;
+  }
+  el.parentElement.querySelectorAll('.place-tag')
+    .forEach(a => a.style.fontWeight = 'normal');
+  el.style.fontWeight = 'bold';
+
+  const mapId = "map_" + day;
+
+  fetch(`https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(place)}&limit=1&apiKey=${GEO_KEY}`)
+    .then(r => r.json())
+    .then(data => {
+      const feature = data.features?.[0];
+      if (!feature) return;
+      const lon = feature.geometry.coordinates[0];
+      const lat = feature.geometry.coordinates[1];
+
+      if (window[mapId] && window[mapId].setView) {
+        window[mapId].setView([lat, lon], 13);
+      } else {
+        window[mapId] = L.map(mapId, { center: [lat, lon], zoom: 13 });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(window[mapId]);
+        setTimeout(() => window[mapId] && window[mapId].invalidateSize(true), 500);
+      }
+
+      if (window["marker_" + day]) window[mapId].removeLayer(window["marker_" + day]);
+      window["marker_" + day] = L.marker([lat, lon])
+        .addTo(window[mapId])
+        .bindPopup(place)
+        .openPopup();
+    })
+    .catch(err => console.error("Map error:", err));
+}
+
+// Load all cards with 300ms gap
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".day-card-body").forEach((card, i) => {
+    const first = card.querySelector(".place-tag");
+    if (!first) return;
+    setTimeout(() => {
+      card.dataset.mapLoaded = "true";
+      first.click();
+    }, i * 300);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan Trip — TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+
+<div class="plan-page">
+  <div class="plan-overlay"></div>
+
+  <!-- NAV -->
+  <nav class="plan-nav">
+    <a href="/" class="logo">TRIPAIO</a>
+    <div style="display:flex;gap:24px;align-items:center">
+      <a href="/listings">Staycations</a>
+      <a href="/trip/saved">My Trips</a>
+      <a href="/trip/budget">Budget</a>
+      <% if(locals.currUser) { %>
+        <a href="/logout" style="color:rgba(255,255,255,.5)">Logout</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- FORM -->
+  <div class="plan-center">
+    <div class="plan-card">
+      <h2>✈️ Plan Your Trip</h2>
+      <p class="plan-card-sub">Fill in the details and we'll generate your perfect itinerary</p>
+
+      <form action="/trip/generate" method="POST" id="planForm">
+
+        <div class="plan-label"><i class="fas fa-map-marker-alt"></i> Destination</div>
+     <div style="position:relative;">
+  <input class="plan-input" type="text" name="destination" id="destinationInput" placeholder="e.g. Goa, Bali, Manali..." required autocomplete="off">
+  <div id="destSuggestions" style="background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);display:none;max-height:200px;overflow-y:auto;border:1px solid var(--border);z-index:9999;position:absolute;width:100%;left:0;top:100%;"></div>
+</div>
+
+        <div class="plan-label"><i class="fas fa-calendar-alt"></i> Number of Days</div>
+        <input class="plan-input" type="number" name="days" placeholder="e.g. 5" min="1" max="30" required>
+
+        <div class="plan-label"><i class="fas fa-users"></i> Travelers</div>
+        <div class="chip-group" id="peopleGroup">
+          <% ['Solo','Couple','Family','Friends','Group'].forEach((t,i) => { %>
+            <div class="chip <%= i===0?'selected':'' %>" onclick="selectChip(this,'people','<%= t %>')">
+              <%= t %>
+            </div>
+          <% }) %>
+        </div>
+        <input type="hidden" name="people" id="peopleVal" value="Solo">
+
+        <div class="plan-label"><i class="fas fa-wallet"></i> Budget</div>
+        <div class="chip-group" id="budgetGroup">
+          <% ['Low','Medium','High'].forEach((b,i) => { %>
+            <div class="chip <%= i===1?'selected':'' %>" onclick="selectChip(this,'budget','<%= b %>')">
+              <%= b %>
+            </div>
+          <% }) %>
+        </div>
+        <input type="hidden" name="budget" id="budgetVal" value="Medium">
+
+        <!-- Optional Amount -->
+        <div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:.72rem;color:var(--brown);font-weight:600;white-space:nowrap">Optional amount</span>
+          <div style="position:relative;flex:1">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--brown);font-size:.8rem;font-weight:700">₹</span>
+            <input
+              class="plan-input"
+              type="number"
+              name="budgetAmount"
+              id="budgetAmount"
+              placeholder="e.g. 25000"
+              min="0"
+              style="padding-left:26px;margin-bottom:0;background:#fff;border:1.5px solid var(--border);color:var(--brown);font-weight:500"
+            >
+          </div>
+        </div>
+
+        <div class="plan-label" style="margin-top:18px"><i class="fas fa-star"></i> Interests</div>
+        <div class="chip-group" id="interestGroup">
+          <% ['Adventure','Sightseeing','Shopping','Beaches','Spa','Food','Festival'].forEach(interest => { %>
+            <div class="chip" onclick="toggleInterest(this,'<%= interest %>')"><%= interest %></div>
+          <% }) %>
+        </div>
+        <input type="hidden" name="interests" id="interestsVal" value="">
+
+        <button class="btn-generate" type="submit">
+          <i class="fas fa-magic" style="margin-right:8px"></i>Generate Itinerary
+        </button>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectChip(el, type, value) {
+    el.closest('.chip-group').querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById(type + 'Val').value = value;
+  }
+
+  const selectedInterests = new Set();
+  function toggleInterest(el, value) {
+    if (selectedInterests.has(value)) {
+      selectedInterests.delete(value);
+      el.classList.remove('selected');
+    } else {
+      selectedInterests.add(value);
+      el.classList.add('selected');
+    }
+    document.getElementById('interestsVal').value = [...selectedInterests].join(',');
+  }
+
+document.getElementById('planForm').addEventListener('submit', function(e) {
+    const dest = this.destination.value.trim();
+    const days = this.days.value.trim();
+    if (!dest || !days) {
+      e.preventDefault();
+      alert('Please fill in destination and number of days.');
+    }
+  });
+</script>
+<script>
+const destInput = document.getElementById('destinationInput');
+const destBox = document.getElementById('destSuggestions');
+let timer;
+
+destInput.addEventListener('input', () => {
+  clearTimeout(timer);
+  const q = destInput.value.trim();
+  if (q.length < 2) return destBox.style.display = 'none';
+  timer = setTimeout(async () => {
+    const data = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6`).then(r => r.json());
+    if (!data.length) return destBox.style.display = 'none';
+    destBox.innerHTML = data.map(p => `
+      <div onmousedown="destInput.value='${p.display_name.split(',')[0].trim()}';destBox.style.display='none'"
+        style="padding:10px 14px;cursor:pointer;font-size:.82rem;color:#4A2E1F;border-bottom:1px solid #E8D9B8"
+        onmouseover="this.style.background='#FBF7F0'" onmouseout="this.style.background='#fff'">
+        <i class="fas fa-map-marker-alt" style="color:#D2691E;margin-right:8px"></i>
+        ${p.display_name.split(',').slice(0,3).join(', ')}
+      </div>`).join('');
+    destBox.style.display = 'block';
+  }, 350);
+});
+
+document.addEventListener('click', e => { if (!e.target.closest('#destinationInput')) destBox.style.display = 'none'; });
+
+document.getElementById('planForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const dest = destInput.value.trim();
+  if (!dest || !this.days.value.trim()) return alert('Please fill in destination and number of days.');
+
+  const btn = this.querySelector('.btn-generate');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:8px"></i>Checking...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 100,
+        messages: [{ role: "user", content: `Fix spelling of this travel destination and return only the corrected name, nothing else: "${dest}"` }]
+      })
+    });
+    const corrected = (await res.json()).content?.[0]?.text?.trim();
+    if (corrected && corrected.toLowerCase() !== dest.toLowerCase()) destInput.value = corrected;
+  } catch (err) { console.error(err); }
+
+  btn.disabled = false;
+  this.submit();
+});
+</script>
+</body>
+</html>

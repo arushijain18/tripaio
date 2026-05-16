@@ -1,0 +1,65 @@
+<% locals.currUser = locals.currUser || currUser || null; %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripAIO</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+
+<nav class="inner-nav">
+  <a href="/" class="inner-logo">TRIPAIO</a>
+  <div class="nav-mid">
+    <% if(locals.activePage !== 'listings') { %>
+    <a href="/listings">Staycations</a>
+  <% } %>
+    <a href="/trip/plan">Plan Trip</a>
+    <a href="/trip/saved">My Trips</a>
+     <a href="/trip/budget">Budget</a>
+  </div>
+  <div class="nav-right">
+    <% if(locals.currUser) { %>
+    <span style="font-size:.75rem;color:var(--muted);margin-right:8px">Hi, <%= locals.currUser.username %></span>
+      <a href="/logout" class="btn-nav-solid">Logout</a>
+    <% } else { %>
+      <a href="/login" class="btn-nav-outline">Log In</a>
+      <a href="/signup" class="btn-nav-solid">Sign Up</a>
+    <% } %>
+  </div>
+  <button class="nav-hamburger" id="navToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<% if(locals.success && success.length) { %>
+  <div class="flash-box flash-success" id="flash"><i class="fas fa-check-circle"></i> <%= success[0] %></div>
+<% } %>
+<% if(locals.error && error.length) { %>
+  <div class="flash-box flash-error" id="flash"><i class="fas fa-exclamation-circle"></i> <%= error[0] %></div>
+<% } %>
+
+<main><%- body %></main>
+
+<footer class="site-footer">
+  <div class="footer-socials">
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+  </div>
+  <p>© TripAIO Private Limited</p>
+  <div class="footer-links"><a href="#">Privacy</a><a href="#">Terms</a></div>
+</footer>
+
+
+<script src="/js/script.js"></script>
+<script>
+  const flash = document.getElementById('flash');
+  if(flash) setTimeout(() => flash.style.opacity = '0', 3500);
+</script>
+</body>
+</html>

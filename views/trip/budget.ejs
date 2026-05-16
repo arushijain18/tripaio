@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Planner — TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { margin:0; background:var(--sand-light); }
+ 
+.budget-nav { display:flex; align-items:center; height:60px; padding:0 40px; background:var(--sand-light); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:999; }
+.budget-nav  .logo { font-family:var(--serif); font-size:1.3rem; letter-spacing:.1em; color:var(--brown); font-weight:600; text-decoration:none; margin-right:auto; }
+.budget-nav .links { display:flex; gap:24px; position:absolute; left:50%; transform:translateX(-50%); }
+.budget-nav .links a { font-size:.68rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-decoration:none; }
+.budget-nav .links a:hover { color:var(--terracotta); }
+.budget-nav .logout { font-size:.68rem; font-weight:600; padding:7px 16px; border:1.5px solid var(--terracotta); color:var(--terracotta); border-radius:4px; text-decoration:none; margin-left:auto; }
+.budget-nav .logout:hover { background:var(--terracotta); color:#fff; }
+    .budget-footer { background:var(--brown); padding:22px 40px; text-align:center; margin-top:60px; }
+    .budget-footer p { color:rgba(245,230,200,.35); font-size:.72rem; }
+    .budget-footer-socials { display:flex; justify-content:center; gap:14px; margin-bottom:8px; }
+    .budget-footer-socials a { color:rgba(245,230,200,.3); font-size:.85rem; text-decoration:none; }
+    .budget-footer-socials a:hover { color:var(--sand); }
+    body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.budget-wrap {
+  flex: 1;
+}
+
+    /* PRINT STYLES */
+    @media print {
+      .budget-nav, .budget-footer, .btn-calc, .btn-print, form button { display:none !important; }
+      body { background:#fff; }
+      .budget-card { box-shadow:none; border:none; }
+      .trip-banner { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .summary-box { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .cat-row-bar-fill { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="budget-nav">
+  <a href="/" class="logo">TRIPAIO</a>
+  <div class="links">
+    <a href="/listings">Staycations</a>
+    <a href="/trip/plan">Plan Trip</a>
+    <a href="/trip/saved">My Trips</a>
+  </div>
+  <% if(locals.currUser) { %>
+    <a href="/logout" class="logout">Logout</a>
+  <% } %>
+</nav>
+
+<!-- BANNER -->
+<div class="trip-banner">
+  <span>Smart Trip Planning</span>
+  <h1><i class="fas fa-wallet" style="margin-right:12px;font-size:2rem;color:var(--gold)"></i>Budget Planner</h1>
+  <p>Calculate and split your travel expenses effortlessly</p>
+</div>
+
+<!-- FORM + RESULTS -->
+<div class="budget-wrap">
+  <div class="budget-card" id="receiptArea">
+
+    <h2><i class="fas fa-calculator" style="color:var(--terracotta);margin-right:8px;font-size:1.1rem"></i>Calculate Your Budget</h2>
+
+    <form action="/trip/budget" method="GET">
+      <div class="f-group">
+        <label class="f-label"><i class="fas fa-map-pin" style="color:var(--terracotta);margin-right:4px"></i> Destination</label>
+        <input class="f-input" type="text" name="destination" value="<%= typeof destination!=='undefined'?destination:'' %>" placeholder="e.g. Goa, Paris, Bali" required>
+      </div>
+      <div class="f-row">
+        <div class="f-group">
+          <label class="f-label"><i class="fas fa-calendar-alt" style="color:var(--terracotta);margin-right:4px"></i> Days</label>
+          <input class="f-input" type="number" name="days" value="<%= typeof days!=='undefined'?days:'' %>" placeholder="e.g. 5" min="1" required>
+        </div>
+        <div class="f-group">
+          <label class="f-label"><i class="fas fa-users" style="color:var(--terracotta);margin-right:4px"></i> People</label>
+          <input class="f-input" type="number" name="people" value="<%= typeof people!=='undefined'?people:'' %>" placeholder="e.g. 3" min="1">
+        </div>
+      </div>
+      <div class="f-group">
+        <label class="f-label"><i class="fas fa-rupee-sign" style="color:var(--terracotta);margin-right:4px"></i> Total Budget (₹)</label>
+        <input class="f-input" type="number" name="budget" value="<%= typeof budget!=='undefined'?budget:'' %>" placeholder="e.g. 60000" min="0">
+      </div>
+      <button class="btn-calc" type="submit">
+        <i class="fas fa-coins" style="margin-right:8px"></i>Calculate & Split
+      </button>
+    </form>
+
+    <!-- RESULTS -->
+    <% if(typeof destination!=='undefined' && destination && typeof budget!=='undefined' && budget) {
+      const b = parseInt(budget)||0;
+      const d = parseInt(days)||1;
+      const p = parseInt(people)||1;
+      const cats = [
+        {label:'Accommodation', icon:'fa-hotel',      pct:35, color:'#D2691E'},
+        {label:'Food & Dining', icon:'fa-utensils',   pct:25, color:'#C9A227'},
+        {label:'Transport',     icon:'fa-car',         pct:20, color:'#2A9D8F'},
+        {label:'Activities',    icon:'fa-ticket-alt',  pct:15, color:'#7A4E2D'},
+        {label:'Miscellaneous', icon:'fa-receipt',     pct:5,  color:'#8B7355'}
+      ];
+    %>
+      <div class="budget-result">
+
+        <!-- Receipt Header (visible on print) -->
+        <div style="display:none" class="print-header">
+          <h2 style="font-family:var(--serif);color:var(--brown);margin-bottom:4px">TripAIO Budget Receipt</h2>
+          <p style="font-size:.8rem;color:var(--muted)">Generated on <%= new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) %></p>
+          <hr style="border:none;border-top:1px solid var(--border);margin:12px 0">
+        </div>
+
+        <h3>Breakdown for <em style="color:var(--terracotta)"><%= destination %></em></h3>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+          <div class="summary-box">
+            <span>Per Day</span>
+            <b>₹<%= Math.round(b/d).toLocaleString('en-IN') %></b>
+          </div>
+          <div class="summary-box">
+            <span>Per Person</span>
+            <b>₹<%= Math.round(b/p).toLocaleString('en-IN') %></b>
+          </div>
+          <div class="summary-box">
+            <span>Per Person/Day</span>
+            <b>₹<%= Math.round(b/(d*p)).toLocaleString('en-IN') %></b>
+          </div>
+        </div>
+
+        <!-- Category Bars -->
+        <% cats.forEach(c => { %>
+          <div class="cat-row">
+            <div class="cat-row-icon" style="background:<%= c.color %>22">
+              <i class="fas <%= c.icon %>" style="color:<%= c.color %>;font-size:.8rem"></i>
+            </div>
+            <div class="cat-row-bar">
+              <div class="cat-row-bar-top">
+                <span style="color:var(--brown);font-weight:500"><%= c.label %></span>
+                <span style="color:var(--muted)">₹<%= Math.round(b*c.pct/100).toLocaleString('en-IN') %> (<%= c.pct %>%)</span>
+              </div>
+              <div class="cat-row-bar-track">
+                <div class="cat-row-bar-fill" style="width:<%= c.pct %>%;background:<%= c.color %>"></div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+
+        <!-- Trip Details for Receipt -->
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="font-size:.78rem;color:var(--muted)">Destination: <strong style="color:var(--brown)"><%= destination %></strong></div>
+          <div style="font-size:.78rem;color:var(--muted)">Duration: <strong style="color:var(--brown)"><%= days %> Days</strong></div>
+          <div style="font-size:.78rem;color:var(--muted)">Travelers: <strong style="color:var(--brown)"><%= people || 1 %> People</strong></div>
+          <div style="font-size:.78rem;color:var(--muted)">Total Budget: <strong style="color:var(--terracotta)">₹<%= parseInt(budget).toLocaleString('en-IN') %></strong></div>
+        </div>
+
+        <!-- PRINT BUTTON -->
+        <button class="btn-print" onclick="printReceipt()" style="margin-top:20px;width:100%;padding:12px;background:var(--brown);color:#fff;font-family:var(--sans);font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .3s">
+          <i class="fas fa-print"></i> Print Receipt
+        </button>
+
+      </div>
+    <% } %>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="budget-footer">
+  <div class="budget-footer-socials">
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+  </div>
+  <p>© TripAIO Private Limited</p>
+</footer>
+<script>
+function printReceipt() {
+  const h = document.querySelector('.print-header');
+  if(h) h.style.display = 'block';
+  window.print();
+  if(h) h.style.display = 'none';
+}
+
+const di = document.querySelector('input[name="destination"]');
+const db = Object.assign(document.createElement('div'), {style: 'background:#fff;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.15);display:none;max-height:200px;overflow-y:auto;border:1px solid #ddd;z-index:9999;position:absolute;width:100%;left:0;top:100%'});
+di.parentElement.style.position = 'relative';
+di.parentElement.appendChild(db);
+
+let t;
+di.addEventListener('input', () => {
+  clearTimeout(t);
+  const q = di.value.trim();
+  if (q.length < 2) return db.style.display = 'none';
+  t = setTimeout(async () => {
+    const data = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6`).then(r => r.json());
+    db.style.display = data.length ? 'block' : 'none';
+    db.innerHTML = data.map(p => `<div onmousedown="di.value='${p.display_name.split(',')[0].trim()}';db.style.display='none'" style="padding:10px 14px;cursor:pointer;font-size:.82rem;color:#4A2E1F;border-bottom:1px solid #E8D9B8" onmouseover="this.style.background='#FBF7F0'" onmouseout="this.style.background='#fff'"><i class="fas fa-map-marker-alt" style="color:#D2691E;margin-right:8px"></i>${p.display_name.split(',').slice(0,3).join(', ')}</div>`).join('');
+  }, 350);
+});
+
+document.addEventListener('click', e => { if (!e.target.closest('input[name="destination"]')) db.style.display = 'none'; });
+
+document.querySelector('form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  try {
+    const { corrected } = await fetch('/api/spellcheck', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ destination: di.value.trim() }) }).then(r => r.json());
+    if (corrected && corrected.toLowerCase() !== di.value.trim().toLowerCase()) di.value = corrected;
+  } catch(e) {}
+  this.submit();
+});
+</script>
+
+</body>
+</html>

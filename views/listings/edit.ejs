@@ -1,0 +1,78 @@
+
+
+<% layout('layouts/boilerplate') %>
+
+<div class="form-banner">
+  <h1>Edit Listing</h1>
+  <p>Update your stay details</p>
+</div>
+
+<div class="form-wrap">
+  <form action="/listings/<%= listing._id %>?_method=PUT" method="POST" enctype="multipart/form-data" class="form-card">
+
+    <span class="form-section">Basic Info</span>
+    <div class="f-group">
+      <label class="f-label">Title</label>
+      <input class="f-input" type="text" name="listing[title]" value="<%= listing.title %>" required>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Description</label>
+      <textarea class="f-input" name="listing[description]" rows="4" required><%= listing.description %></textarea>
+    </div>
+
+    <span class="form-section" style="margin-top:8px">Location & Price</span>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Price / Night (₹)</label>
+        <input class="f-input" type="number" name="listing[price]" value="<%= listing.price %>" min="0" required>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Country</label>
+        <input class="f-input" type="text" name="listing[country]" value="<%= listing.country %>" required>
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Location</label>
+      <input class="f-input" type="text" name="listing[location]" value="<%= listing.location %>" required>
+    </div>
+
+    <span class="form-section" style="margin-top:8px">Category & Image</span>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Category</label>
+        <select class="f-input f-input-select" name="listing[category]">
+          <% ['trending','mountains','arctic','castle','amazing pools','camping','farm','rooms','cities','beachfront'].forEach(c => { %>
+            <option value="<%= c %>" <%= listing.category === c ? 'selected' : '' %>>
+              <%= c.charAt(0).toUpperCase() + c.slice(1) %>
+            </option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Current Image</label>
+        <img src="<%= originalImageUrl %>" style="height:72px;border-radius:8px;display:block;margin-bottom:8px;object-fit:cover;border:1px solid var(--border)">
+        <label class="f-label">Upload New Image</label>
+        <input class="f-input" type="file" name="listing[image]" accept="image/*" onchange="preview(this)" style="padding:8px 14px">
+        <img id="prev" class="img-preview" alt="preview">
+      </div>
+    </div>
+
+    <button class="btn-form" type="submit">
+      <i class="fas fa-save" style="margin-right:6px"></i>Save Changes
+    </button>
+
+  </form>
+</div>
+
+<script>
+  function preview(i) {
+    if (!i.files[0]) return;
+    const r = new FileReader();
+    r.onload = e => {
+      const p = document.getElementById('prev');
+      p.src = e.target.result;
+      p.style.display = 'block';
+    };
+    r.readAsDataURL(i.files[0]);
+  }
+</script>

@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Trips — TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { margin:0; background:var(--sand-light); }
+    /* In each file's <style> block, update the nav */
+.saved-nav { display:flex; align-items:center; height:60px; padding:0 40px; background:var(--sand-light); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:999; }
+.saved-nav .logo { font-family:var(--serif); font-size:1.3rem; letter-spacing:.1em; color:var(--brown); font-weight:600; text-decoration:none; margin-right:auto; }
+.saved-nav .links { display:flex; gap:24px; position:absolute; left:50%; transform:translateX(-50%); }
+.saved-nav .links a { font-size:.68rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); text-decoration:none; }
+.saved-nav .links a:hover { color:var(--terracotta); }
+.saved-nav .logout { font-size:.68rem; font-weight:600; padding:7px 16px; border:1.5px solid var(--terracotta); color:var(--terracotta); border-radius:4px; text-decoration:none; margin-left:auto; }
+.saved-nav .logout:hover { background:var(--terracotta); color:#fff; }
+    .saved-footer { background:var(--brown); padding:22px 40px; text-align:center; margin-top:60px; }
+    .saved-footer p { color:rgba(245,230,200,.35); font-size:.72rem; }
+    .saved-footer-socials { display:flex; justify-content:center; gap:14px; margin-bottom:8px; }
+    .saved-footer-socials a { color:rgba(245,230,200,.3); font-size:.85rem; text-decoration:none; }
+    .saved-footer-socials a:hover { color:var(--sand); }
+    .saved-footer-links { display:flex; justify-content:center; gap:18px; margin-top:5px; }
+    .saved-footer-links a { font-size:.7rem; color:rgba(245,230,200,.35); text-decoration:none; }
+    body {display: flex;flex-direction: column;min-height: 100vh;}
+.saved-wrap { max-width:1200px; margin:0 auto; padding:40px 40px 80px;}
+.trips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .trips-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .trips-grid { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="saved-nav">
+  <a href="/" class="logo">TRIPAIO</a>
+  <div class="links">
+    <a href="/listings">Staycations</a>
+    <a href="/trip/plan">Plan Trip</a>
+    <a href="/trip/budget">Budget</a>
+  </div>
+  <% if(locals.currUser) { %>
+    <a href="/logout" class="logout">Logout</a>
+  <% } %>
+</nav>
+
+<!-- FLASH -->
+<% if(locals.success && success.length) { %>
+  <div style="position:fixed;top:68px;right:20px;z-index:9999;background:#F0FDF4;border:1px solid #86EFAC;color:#166534;padding:12px 20px;border-radius:8px;font-size:.82rem">
+    <i class="fas fa-check-circle"></i> <%= success[0] %>
+  </div>
+<% } %>
+
+<!-- BANNER -->
+<div class="trip-banner">
+  <span>All your planned adventures</span>
+  <h1><i class="fas fa-bookmark" style="margin-right:12px;font-size:2rem;color:var(--gold)"></i>Your Travel List</h1>
+  <p>Swipe to explore your saved trips</p>
+</div>
+
+<!-- TRIPS GRID -->
+<div class="saved-wrap">
+  <% if(list && list.length) { %>
+  <div class="trips-grid">
+      <% list.forEach(trip => { %>
+        <div class="trip-card">
+
+          <!-- Cover Image -->
+          <div class="trip-card-img">
+            <% if(trip.coverImage) { %>
+              <img src="<%= trip.coverImage %>" alt="<%= trip.destination %>">
+            <% } else { %>
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
+                <i class="fas fa-map-marked-alt" style="font-size:2rem;color:rgba(255,255,255,.25)"></i>
+              </div>
+            <% } %>
+            <div class="trip-card-loc">
+              <i class="fas fa-map-pin" style="margin-right:4px"></i><%= trip.destination.toUpperCase() %>
+            </div>
+            <% if(trip.createdAt) { %>
+              <div class="trip-card-date">
+                Saved <%= new Date(trip.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- Card Body -->
+          <div class="trip-card-body">
+            <div class="trip-tags">
+              <span class="trip-tag"><i class="fas fa-calendar"></i> <%= trip.days %> Days</span>
+              <span class="trip-tag"><i class="fas fa-users"></i> <%= trip.people %></span>
+              <span class="trip-tag"><i class="fas fa-wallet"></i> ₹<%= trip.budget %></span>
+            </div>
+            <div class="trip-actions">
+              <a href="/trip/saved/<%= trip._id %>" class="btn-view">
+                <i class="fas fa-eye" style="margin-right:4px;font-size:.65rem"></i>View
+              </a>
+              <form action="/trip/saved/<%= trip._id %>?_method=DELETE" method="POST" style="flex:1" onsubmit="return confirm('Delete this trip?')">
+                <button class="btn-del-trip" style="width:100%">
+                  <i class="fas fa-trash" style="margin-right:4px;font-size:.65rem"></i>Delete
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      <% }) %>
+    </div>
+
+    <div style="text-align:center;margin-top:44px">
+      <a href="/trip/plan" class="btn-primary">
+        <i class="fas fa-plus" style="margin-right:6px"></i>Plan a New Trip
+      </a>
+    </div>
+
+  <% } else { %>
+    <div class="empty-state">
+      <i class="fas fa-suitcase" style="font-size:2.5rem;color:var(--border);display:block;margin-bottom:16px"></i>
+      <p>No saved trips yet</p>
+      <a href="/trip/plan" class="btn-primary">Plan Your First Trip →</a>
+    </div>
+  <% } %>
+</div>
+
+<!-- FOOTER -->
+<footer class="saved-footer">
+  <div class="saved-footer-socials">
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+  </div>
+  <p>© TripAIO Private Limited</p>
+  <div class="saved-footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </div>
+</footer>
+
+</body>
+</html>

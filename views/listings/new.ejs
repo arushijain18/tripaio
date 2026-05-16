@@ -1,0 +1,77 @@
+
+<% layout('layouts/boilerplate') %>
+
+<div class="form-banner">
+  <h1>List Your Stay</h1>
+  <p>Share your space with travellers worldwide</p>
+</div>
+
+<div class="form-wrap">
+  <form action="/listings" method="POST" enctype="multipart/form-data" class="form-card">
+    <span class="form-section">Basic Info</span>
+    <div class="f-group">
+      <label class="f-label">Title</label>
+      <input class="f-input" type="text" name="listing[title]" placeholder="Give your stay a catchy title" required>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Description</label>
+      <textarea class="f-input" name="listing[description]" rows="4" required></textarea>
+    </div>
+
+    <span class="form-section" style="margin-top:8px">Location & Price</span>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Price / Night (₹)</label>
+        <input class="f-input" type="number" name="listing[price]" placeholder="e.g. 5000" min="0" required>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Country</label>
+        <input class="f-input" type="text" name="listing[country]" placeholder="e.g. India" required>
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Location</label>
+      <input class="f-input" type="text" name="listing[location]" placeholder="e.g. Goa, Maharashtra" required>
+    </div>
+
+    <span class="form-section" style="margin-top:8px">Category & Image</span>
+    <div class="f-row">
+      <div class="f-group">
+        <label class="f-label">Category</label>
+        <select class="f-input f-input-select" name="listing[category]">
+          <option value="">Select category</option>
+          <% ['trending','mountains','arctic','castle','amazing pools','camping','farm','rooms','cities','beachfront'].forEach(c => { %>
+            <option value="<%= c %>"><%= c.charAt(0).toUpperCase()+c.slice(1) %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="f-group">
+        <label class="f-label">Image</label>
+        <!-- <iput class="f-input" type="file" name="listing[image]" accept="image/*" onchange="preview(this)"></iput>n -->
+         <input class="f-input" type="file" name="listing[image]" accept="image/*" required onchange="preview(this)">
+        <img id="prev" class="img-preview" alt="preview">
+      </div>
+    </div>
+
+    <button class="btn-form" type="submit">Publish Listing</button>
+  </form>
+</div>
+
+<script>
+  function preview(i) {
+    const r = new FileReader();
+    r.onload = e => { const p = document.getElementById('prev'); p.src = e.target.result; p.style.display = 'block'; };
+    r.readAsDataURL(i.files[0]);
+  }
+
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const img = document.querySelector('input[name="listing[image]"]');
+    if (!img.files.length) {
+      e.preventDefault();
+      img.setCustomValidity('Image is required');
+      img.reportValidity();
+    } else {
+      img.setCustomValidity('');
+    }
+  });
+</script>

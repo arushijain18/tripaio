@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripAIO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+
+<nav class="inner-nav">
+  <a href="/" class="inner-logo">TRIPAIO</a>                                                                                           
+  <div class="nav-mid">
+    <a href="/listings">Staycations</a>
+    <a href="/trip/plan">Plan Trip</a>
+    <a href="/trip/saved">My Trips</a>
+    <a href="/trip/budget">Budget</a>
+  </div>
+  <div class="nav-right">
+    <% if(currUser) { %>
+      <span style="font-size:.75rem;color:var(--muted);margin-right:8px">Hi, <%= currUser.username %></span>
+      <a href="/logout" class="btn-nav-solid">Logout</a>
+    <% } else { %>
+      <a href="/login" class="btn-nav-outline">Log In</a>
+      <a href="/signup" class="btn-nav-solid">Sign Up</a>
+    <% } %>
+  </div>
+</nav>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css">
+
+<div class="show-wrap">
+
+  <!-- Cover Image -->
+  <img src="<%= listing.image.url %>" class="show-img" alt="<%= listing.title %>">
+
+  <!-- Title + Price -->
+  <div class="show-top">
+    <h1 class="show-title"><%= listing.title %></h1>
+    <div class="show-price">₹<%= listing.price.toLocaleString('en-IN') %><span>/night</span></div>
+  </div>
+
+  <!-- Meta -->
+  <p class="show-meta">
+    Owned by <strong><%= listing.owner ? listing.owner.username : 'Host' %></strong> &nbsp;&nbsp;
+    <i class="fas fa-map-marker-alt"></i> <%= listing.location %>, <%= listing.country %>
+    <% if(listing.category) { %> &nbsp;·&nbsp; <i class="fas fa-tag"></i> <%= listing.category %><% } %>
+  </p>
+
+  <hr class="show-divider">
+  <p class="show-desc"><%= listing.description %></p>
+
+  <!-- Owner Actions — only if logged in AND is owner -->
+  
+   <% if(currUser && listing.owner && currUser._id.toString() === listing.owner._id.toString()) { %>
+    <div class="show-actions">
+      <a href="/listings/<%= listing._id %>/edit" class="btn-edit">
+        <i class="fas fa-pen" style="margin-right:5px;font-size:.65rem"></i>Edit
+      </a>
+      <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
+        <button class="btn-delete" onclick="return confirm('Delete this listing?')">
+          <i class="fas fa-trash" style="margin-right:5px;font-size:.65rem"></i>Delete
+        </button>
+      </form>
+    </div>
+  <% } %>
+
+  <!-- Review Form — show to any logged in user -->
+  <% if(currUser) { %>
+    <div class="review-box">
+      <h3>Leave a Review</h3>
+      <form action="/listings/<%= listing._id %>/reviews" method="POST">
+        <label class="f-label">Rating</label>
+       <div class="star-row">
+  <% for(let i=5; i>=1; i--) { %>
+    <input type="radio" id="s<%= i %>" name="review[rating]" value="<%= i %>" <%= i===1 ? 'checked' : '' %>>
+    <label for="s<%= i %>">★</label>
+  <% } %>
+</div>
+        <label class="f-label">Comments</label>
+        <textarea class="f-input" name="review[comment]" rows="3" placeholder="Optional..."></textarea>
+        <button class="btn-submit" type="submit">Submit Review</button>
+      </form>
+    </div>
+  <% } else { %>
+    <div style="background:var(--sand-light);border-radius:var(--radius);padding:20px 24px;margin-bottom:28px;border:1px solid var(--border);text-align:center">
+      <p style="font-size:.85rem;color:var(--muted);font-weight:300">
+        <a href="/login" style="color:var(--terracotta);font-weight:600">Sign in</a> to leave a review
+      </p>
+    </div>
+  <% } %>
+
+  <!-- Existing Reviews -->
+  <% if(listing.reviews && listing.reviews.length) { %>
+    <div class="review-box" style="background:#fff">
+      <h3>Guest Reviews</h3>
+      <% for(let r of listing.reviews) { %>
+        <div class="review-item">
+          <div class="review-head">
+            <span class="review-author">
+              <i class="fas fa-user-circle" style="color:var(--terracotta);margin-right:4px"></i>
+              <%= r.author ? r.author.username : 'Guest' %>
+            </span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="review-stars"><%= '★'.repeat(r.rating) %><%= '☆'.repeat(5-r.rating) %></span>
+             
+              <% if (currUser && r.author && r.author._id && currUser._id.toString() === r.author._id.toString()) { %>
+  <form action="/listings/<%= listing._id %>/reviews/<%= r._id %>?_method=DELETE" method="POST" style="display:inline">
+    <button class="btn-del-review">✕</button>
+  </form>
+<% } %>
+            </div>
+          </div>
+          <p class="review-comment"><%= r.comment %></p>
+
+          <p class="review-date" style="font-size:0.75rem; color:gray; margin-top:4px;">
+  <%= new Date(r.createdAt).toLocaleString() %>
+</p>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+
+  <!-- Map -->
+  <h3 class="map-title">Where you'll be</h3>
+  
+<a 
+  href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(listing.title + ' ' + listing.location + ' ' + listing.country) %>"
+  target="_blank"
+  class="gmaps-btn"
+>
+  <i class="fas fa-map-marker-alt"></i>
+  <%= listing.title %>
+</a>
+<div id="map"></div>
+
+
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script>
+  const c = <%- JSON.stringify(listing.geometry.coordinates) %>;
+  const map = L.map('map').setView([c[1], c[0]], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© OpenStreetMap', maxZoom:19
+  }).addTo(map);
+  L.marker([c[1], c[0]]).addTo(map)
+    .bindPopup('<strong><%= listing.title %></strong>').openPopup();
+    </script>
+    </body>
+</html>
