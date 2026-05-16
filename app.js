@@ -20,7 +20,9 @@ const tripRouter = require("./routes/trip");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
+
+const dbUrl= process.env.ATLASDB_URL;
 
 
 // ── VIEW ENGINE ──────────────────────────────
@@ -124,7 +126,7 @@ app.use((err, req, res, next) => {
 // ── START SERVER ─────────────────────────────
 async function startServer() {
   try {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(dbUrl);
     console.log("DB CONNECTED");
     app.listen(8080, () => {
       console.log("Server listening on port 8080");
