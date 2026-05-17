@@ -38,20 +38,34 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 // ── SESSION ──────────────────────────────────
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto:{
+    secret:"mysupersecretcode"
+  },
+  touchAfter:24*3600,
+});
+
+store.on("error",(err) =>{
+  console.log("ERROR in MONGO SESSION STORE",err);
+});
+
 const sessionOptions = {
+  store,
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-   mongoUrl: dbUrl,
-    touchAfter: 24 * 3600,
-  }),
+  // store: MongoStore.create({
+  //  mongoUrl: dbUrl,
+  //   touchAfter: 24 * 3600,
+  // }),
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
     secure: false,
   },
 };
+
 app.use(session(sessionOptions));
 app.use(flash());
 
