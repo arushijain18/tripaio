@@ -1,4 +1,4 @@
-<% locals.currUser = locals.currUser || currUser || null; %>
+<% locals.currUser = locals.currUser || (typeof currUser !== 'undefined' ? currUser : null); %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
