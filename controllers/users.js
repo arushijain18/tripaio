@@ -14,7 +14,7 @@ module.exports.signup = async (req, res, next) => {
       req.session.save((err) => {
         if (err) return next(err);
         req.flash("success", "Welcome to TripAIO!");
-        res.redirect("/");
+        res.redirect("/listings");
       });
     });
   } catch (e) {
@@ -30,9 +30,12 @@ module.exports.renderLoginForm = (req, res) => {
 module.exports.login = (req, res, next) => {
   req.session.save((err) => {
     if (err) return next(err);
-    req.flash("success", "Welcome back to TripAIO!");
-    let redirectUrl = res.locals.redirectUrl || "/";
-    res.redirect(redirectUrl);
+    // req.flash("success", "Welcome back to TripAIO!");
+    // let redirectUrl = res.locals.redirectUrl || "/";
+    // res.redirect(redirectUrl);
+    let redirectUrl = req.session.redirectUrl || "/listings";
+delete req.session.redirectUrl;
+res.redirect(redirectUrl);
   });
 };
 
