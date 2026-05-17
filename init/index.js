@@ -6,7 +6,9 @@ const Listing = require("../models/listings.js");
 const axios = require("axios"); 
 
 // THIS IS THE BASIC SETUP FOR MONGODB
-const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
+require("dotenv").config({ path: "../.env" });
+const MONGO_URL = process.env.ATLASDB_URL;
 
 main().then(() =>{
     console.log("connected to DB");
