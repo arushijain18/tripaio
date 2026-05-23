@@ -79,19 +79,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // ── LOCALS ───────────────────────────────────
-// app.use((req, res, next) => {
-//   res.locals.success = req.flash("success");
-//   res.locals.error = req.flash("error");
-//   res.locals.currUser = req.user;
-//    console.log("CURR USER:", req.user); 
-//   next();
-// });
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success") || [];
-  res.locals.error = req.flash("error") || [];
-  res.locals.currUser = req.user || null;
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
+   console.log("CURR USER:", req.user); 
   next();
 });
+// app.use((req, res, next) => {
+//   res.locals.success = req.flash("success") || [];
+//   res.locals.error = req.flash("error") || [];
+//   res.locals.currUser = req.user || null;
+//   next();
+// });
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
