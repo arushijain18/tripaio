@@ -50,10 +50,11 @@ res.render("listings/index.ejs", {
   rate,
   selectedCategory: null,
   q: q || "",
-  page: parseInt(page),
+  currentPage: parseInt(page),
   totalPages,
   activePage: 'listings',
-  currUser: req.user || null
+  currUser: req.user || null,
+  sort:""
 });
 };
 

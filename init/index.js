@@ -1,16 +1,23 @@
 // requiring everthing you need that is mongodb , data,listings
 
+// const mongoose = require("mongoose");
+// const initData = require("./data.js");
+// const Listing = require("../models/listings.js");
+// const axios = require("axios"); 
+
+// // THIS IS THE BASIC SETUP FOR MONGODB
+// // const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
+// // require("dotenv").config({ path: "../.env" });
+// require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
+
+// const MONGO_URL = process.env.ATLASDB_URL;
+
 const mongoose = require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../models/listings.js");
-const axios = require("axios"); 
+const axios = require("axios");
 
-// THIS IS THE BASIC SETUP FOR MONGODB
-// const MONGO_URL = "mongodb://127.0.0.1:27017/tripaio";
-// require("dotenv").config({ path: "../.env" });
-require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
-
-const MONGO_URL = process.env.ATLASDB_URL;
+const MONGO_URL = "mongodb+srv://arushijain182005_db_user:uQswQ8kzqKt8XaP2@cluster0.f0qy9nq.mongodb.net/tripaio?appName=Cluster0";
 
 main().then(() =>{
     console.log("connected to DB");

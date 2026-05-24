@@ -3,6 +3,7 @@
   
 const express = require("express");
 const app = express();
+app.set('trust proxy', 1);
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -59,10 +60,15 @@ const sessionOptions = {
   //  mongoUrl: dbUrl,
   //   touchAfter: 24 * 3600,
   // }),
+
+
+
+// CHANGE your cookie config inside sessionOptions
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: false,
+   secure: process.env.NODE_ENV === 'production', // enables secure cookies on HTTPS
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allows cross-request cookies
   },
 };
 
