@@ -102,34 +102,50 @@ app.use((req, res, next) => {
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 // ── ROOT ROUTE ───────────────────────────────
+// app.get("/", async (req, res, next) => {
+//   console.log("=== HOME ROUTE HIT ===");
+//   console.log("req.user:", req.user);
+//   console.log("req.session.passport:", req.session.passport);
+//   console.log("isAuthenticated:", req.isAuthenticated());
+//   try {
+//     const featured = await Listing.aggregate([{ $sample: { size: 3 } }]);
+//     const highlight = req.flash("highlight")[0];
+//     const ejs = require('ejs');
+//     const homePath = path.join(__dirname, 'views', 'home.ejs');
+//     ejs.renderFile(homePath, {
+//       featured,
+//       highlight, 
+//       currUser: req.user || null,
+//       user: req.user || null,
+//       success: [],
+//       error: []
+//     }, (err, html) => {
+//       if (err) { console.log("EJS ERROR:", err); return next(err); }
+//       console.log("CURR USER IN TEMPLATE:", req.user ? req.user.username : 'NOBODY');
+//       res.send(html);
+//     });
+//   } catch(err) {
+//     res.render("home.ejs", { 
+//       featured: [], 
+//       highlight: null,
+//       currUser: req.user || null
+//     });
+//   }
+// });
+// NEW - REPLACE WITH THIS
 app.get("/", async (req, res, next) => {
-  console.log("=== HOME ROUTE HIT ===");
-  console.log("req.user:", req.user);
-  console.log("req.session.passport:", req.session.passport);
-  console.log("isAuthenticated:", req.isAuthenticated());
   try {
     const featured = await Listing.aggregate([{ $sample: { size: 3 } }]);
     const highlight = req.flash("highlight")[0];
-    const ejs = require('ejs');
-    const homePath = path.join(__dirname, 'views', 'home.ejs');
-    ejs.renderFile(homePath, {
+    res.render("home.ejs", {
       featured,
-      highlight, 
+      highlight,
       currUser: req.user || null,
-      user: req.user || null,
-      success: [],
-      error: []
-    }, (err, html) => {
-      if (err) { console.log("EJS ERROR:", err); return next(err); }
-      console.log("CURR USER IN TEMPLATE:", req.user ? req.user.username : 'NOBODY');
-      res.send(html);
+      success: res.locals.success || [],
+      error: res.locals.error || []
     });
   } catch(err) {
-    res.render("home.ejs", { 
-      featured: [], 
-      highlight: null,
-      currUser: req.user || null
-    });
+    next(err);
   }
 });
 // ── ROUTERS ──────────────────────────────────
