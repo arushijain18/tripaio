@@ -44,6 +44,7 @@ const store = MongoStore.create({
   crypto:{
     secret:"mysupersecretcode"
   },
+   stringify: false, 
   touchAfter:24*3600,
 });
 
