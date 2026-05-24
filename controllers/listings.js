@@ -78,15 +78,7 @@ module.exports.showListing = async (req, res, next) => {
     return res.redirect("/listings");
   }
 
-  ejs.renderFile(path.join(__dirname, '../views/listings/show.ejs'), {
-    listing,
-    currUser: req.user || null,
-    success: req.flash("success"),
-    error: req.flash("error")
-  }, (err, html) => {
-    if (err) return next(err);
-    res.send(html);
-  });
+  res.render("listings/show.ejs", { listing });
 };
 
 // CREATE
