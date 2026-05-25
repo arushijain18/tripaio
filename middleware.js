@@ -22,18 +22,31 @@ module.exports.saveRedirectUrl=(req,res,next) =>{
     next();
 };
 
-module.exports.isOwner = async(req, res, next) =>{
-    let {id} = req.params;
-       let listing = await Listing.findById(id);
-    //    this will redirect us to show listings 
+// module.exports.isOwner = async(req, res, next) =>{
+//     let {id} = req.params;
+//        let listing = await Listing.findById(id);
+//     //    this will redirect us to show listings 
   
-    if(listing.owner.toString() !== res.locals.currUser._id.toString()) {
-        req.flash("error", "You are not the owner of this listing ");
-       return res.redirect(`/listings/${id}`);
-    }
-    next();
-};
+//     if(listing.owner.toString() !== res.locals.currUser._id.toString()) {
+//         req.flash("error", "You are not the owner of this listing ");
+//        return res.redirect(`/listings/${id}`);
+//     }
+//     next();
+// };
 
+module.exports.isOwner = async (req, res, next) => {
+  let { id } = req.params;
+  let listing = await Listing.findById(id);
+  if (!res.locals.currUser) {
+    req.flash("error", "You must be logged in!");
+    return res.redirect("/login");
+  }
+  if (listing.owner.toString() !== res.locals.currUser._id.toString()) {
+    req.flash("error", "You are not the owner of this listing");
+    return res.redirect(`/listings/${id}`);
+  }
+  next();
+};
 
 module.exports.validateListing = (req ,res, next) => {
     let {error} = listingSchema.validate(req.body);
@@ -58,17 +71,31 @@ module.exports.validateListing = (req ,res, next) => {
  }
 };
 
-module.exports.isReviewAuthor = async(req, res, next) =>{
-    let { id ,reviewId} = req.params;
-       let review = await Review.findById(reviewId);
-    //    this will redirect us to show listings 
+// module.exports.isReviewAuthor = async(req, res, next) =>{
+//     let { id ,reviewId} = req.params;
+//        let review = await Review.findById(reviewId);
+//     //    this will redirect us to show listings 
   
-    if(review.author.toString() !== res.locals.currUser._id.toString()) {
-        req.flash("error", "You are not the author of this review ");
-       return res.redirect(`/listings/${id}`);
-    }
-    next();
-}; 
+//     if(review.author.toString() !== res.locals.currUser._id.toString()) {
+//         req.flash("error", "You are not the author of this review ");
+//        return res.redirect(`/listings/${id}`);
+//     }
+//     next();
+// }; 
+
+module.exports.isReviewAuthor = async (req, res, next) => {
+  let { id, reviewId } = req.params;
+  let review = await Review.findById(reviewId);
+  if (!res.locals.currUser) {
+    req.flash("error", "You must be logged in!");
+    return res.redirect("/login");
+  }
+  if (review.author.toString() !== res.locals.currUser._id.toString()) {
+    req.flash("error", "You are not the author of this review");
+    return res.redirect(`/listings/${id}`);
+  }
+  next();
+};
 
 module.exports.isLoggedInSoft = (req, res, next) => {
   if (!req.isAuthenticated()) {
