@@ -27,12 +27,16 @@ module.exports.save = async (req, res) => {
   res.redirect("/trip/saved");
 };
 
-module.exports.saved = async (req, res, next) => {
-  const list = await Itinerary.find({ owner: req.user._id });
-  res.render('trip/saved.ejs', {
+// module.exports.saved = async (req, res, next) => {
+//   const list = await Itinerary.find({ owner: req.user._id });
+//   res.render('trip/saved.ejs', {
+//     list,
+//     currUser: req.user || null,
+//     success: req.flash("success"),
+//     error: req.flash("error")
+//   });
+// };
+res.render('trip/saved.ejs', {
     list,
-    currUser: req.user || null,
-    success: req.flash("success"),
-    error: req.flash("error")
+    currUser: req.user || null
   });
-};
