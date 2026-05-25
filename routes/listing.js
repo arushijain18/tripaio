@@ -46,9 +46,8 @@ const listings = await Listing.find(filter)
   .limit(limit);
 
 if (q && listings.length === 0) {
-  return res.render("error.ejs", {
-    message: "This staycation or country is unavailable"
-  });
+ req.flash("error", "This staycation or country is unavailable");
+return res.redirect("/listings");
 }
  res.render("listings/index.ejs", {
   listings,
@@ -173,9 +172,11 @@ router.get("/country/:name", async (req, res) => {
   //  If country not found in DB
   if (listings.length === 0) {
     // You can also use flash message (optional improvement)
-    return res.status(404).render("error.ejs", {
-      message: "This country staycations are unavailable"
-    });
+    // return res.status(404).render("error.ejs", {
+    //   message: "This country staycations are unavailable"
+    // });
+    req.flash("error", "This country staycations are unavailable");
+return res.status(404).redirect("/listings");
   }
 
   
