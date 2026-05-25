@@ -2368,7 +2368,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [-0.0777, 51.5229] }
   },
 
-  // ========== TOKYO (3 listings) ==========
+  
   
   {
     title: "Modern Shibuya Apartment – Tokyo City Views",
@@ -2391,7 +2391,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [135.7681, 34.9671] }
   },
 
-  // ========== NEW YORK (3 listings) ==========
+ 
   {
     title: "Stunning Manhattan Loft – SoHo New York",
     description: "A gorgeous industrial-chic loft in the heart of SoHo, Manhattan. Exposed brick walls, high ceilings, and designer furnishings. Steps from world-class galleries, boutiques, and the best restaurants New York has to offer. A true New York City experience.",
@@ -2405,7 +2405,7 @@ const sampleListings = [
   
  
 
-  // ========== MALDIVES (3 listings) ==========
+ 
   {
     title: "Overwater Bungalow with Glass Floor – North Malé Atoll",
     description: "A dreamy overwater bungalow in the North Malé Atoll with a glass floor revealing the crystal-clear lagoon beneath. Features a private deck, direct ocean access, and panoramic views of the Indian Ocean. Breakfast included with daily housekeeping.",
@@ -2428,7 +2428,7 @@ const sampleListings = [
   },
   
 
-  // ========== SANTORINI / GREECE (3 listings) ==========
+  
   {
     title: "Cliffside Cave House with Caldera Views – Oia Santorini",
     description: "A magical whitewashed cave house perched on the cliffs of Oia, Santorini, with breathtaking caldera and volcano views. Features a private plunge pool, vaulted ceilings, and the most spectacular sunsets in the world. Ideal for romantic couples.",
@@ -2460,7 +2460,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [23.7275, 37.9755] }
   },
 
-  // ========== BARCELONA (3 listings) ==========
+
   {
     title: "Stunning Eixample Apartment near Sagrada Familia",
     description: "A beautifully designed apartment in Barcelona's prestigious Eixample district, just a short walk from Gaudí's iconic Sagrada Família. Features high ceilings, modern interiors, and a private balcony. Perfect for exploring Barcelona's architecture, beaches, and nightlife.",
@@ -2483,7 +2483,6 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [2.1927, 41.3784] }
   },
 
-  // ========== LISBON (3 listings) ==========
   {
     title: "Alfama Townhouse with Tagus River Views – Lisbon",
     description: "A charming renovated townhouse in Lisbon's historic Alfama district with stunning views of the Tagus River. Features traditional azulejo tiles, exposed stone walls, a private terrace, and is steps from São Jorge Castle, fado music venues, and local tascas.",
@@ -2515,7 +2514,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [-9.4215, 38.6979] }
   },
 
-  // ========== ISTANBUL (3 listings) ==========
+
  
   {
     title: "Trendy Beyoglu Loft – Vibrant Istanbul",
@@ -2529,7 +2528,7 @@ const sampleListings = [
   },
   
 
-  // ========== QUEENSTOWN NEW ZEALAND (3 listings) ==========
+
   {
     title: "Luxury Lakefront Chalet – Queenstown NZ",
     description: "A breathtaking lakefront chalet in Queenstown with panoramic views of Lake Wakatipu and the Remarkables mountain range. Features a private hot tub on the deck, a cosy fireplace, and easy access to Queenstown's world-class skiing, bungee jumping, and fine dining.",
@@ -2552,7 +2551,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [168.6626, -45.0312] }
   },
 
-  // ========== CANCUN / MEXICO (3 listings) ==========
+
   {
     title: "Beachfront Villa on Cancun Hotel Zone",
     description: "A stunning beachfront villa right on the famous Cancun Hotel Zone with direct access to the Caribbean Sea. Features a private pool, lush tropical garden, and panoramic ocean views. Steps from Cancun's best beach clubs, restaurants, and water sports.",
@@ -2575,7 +2574,7 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [-99.1617, 19.3467] }
   },
 
-  // ========== NEPAL (3 listings) ==========
+  
   {
     title: "Himalayan View Lodge – Nagarkot, Nepal",
     description: "A serene mountain lodge in Nagarkot perched at 2175m altitude with breathtaking panoramic views of the Himalayan range including Mount Everest on clear days. Features cosy rooms, a log fire, home-cooked Nepali meals, and easy trekking trails from the doorstep.",
@@ -2589,7 +2588,7 @@ const sampleListings = [
  
   
 
-  // ========== SRI LANKA (3 listings) ==========
+ 
   {
     title: "Colonial Tea Estate Bungalow – Ella, Sri Lanka",
     description: "A stunning colonial-era tea estate bungalow perched in the misty hills of Ella, Sri Lanka. Surrounded by lush tea plantations, with panoramic views of Ella Rock and Little Adam's Peak. Features a private garden, home-cooked Sri Lankan meals, and guided tea walks.",
@@ -2611,8 +2610,6 @@ const sampleListings = [
     geometry: { type: "Point", coordinates: [80.4549, 5.9483] }
   },
   
-//ghjkdfghj// ─── TIER 1 — MOST SEARCHED ───────────────────────────────────────────────────
-// ─── TIER 1 — MOST SEARCHED ───────────────────────────────────────────────────
 
 {
   title: "Beachside Villa – North Goa",
@@ -2724,7 +2721,6 @@ const sampleListings = [
   geometry: { type: "Point", coordinates: [73.4077, 18.7481] }
 },
 
-// ─── TIER 2 — VERY HIGH ───────────────────────────────────────────────────────
 
 {
   title: "Lakeside Kumaon Retreat – Nainital",
@@ -2836,7 +2832,7 @@ const sampleListings = [
   geometry: { type: "Point", coordinates: [88.2636, 27.0360] }
 },
 
-// ─── TIER 3 — HIGH ────────────────────────────────────────────────────────────
+
 
 {
   title: "Ghats Heritage Guesthouse – Varanasi",

@@ -34,8 +34,7 @@ if (q) {
 const total = await Listing.countDocuments(filter);
 
 // const listings = await Listing.find(filter)
-//   .skip(skip)
-//   .limit(limit);
+
 const sort = req.query.sort;
 let sortOption = {};
 if (sort === "low") sortOption = { price: 1 };
@@ -179,14 +178,7 @@ router.get("/country/:name", async (req, res) => {
     });
   }
 
-  // res.render("listings/index.ejs", {
-  //   listings,
-  //   selectedCategory: name,
-  //   rate: 0.012,
-  //   currentPage: 1,
-  // totalPages: 1,
-  // q: ""
-  // });
+  
   res.render("listings/index.ejs", {
     listings,
     selectedCategory: name,

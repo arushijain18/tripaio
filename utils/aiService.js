@@ -1,29 +1,7 @@
 const axios = require("axios");
 
 module.exports.generateItinerary = async (tripData) => {
-//   const { destination, days, people, budget, interests } = tripData;
 
-//   const prompt = `
-// Return ONLY valid JSON.
-
-// {
-//   "destination": "${destination}",
-//   "days": [
-//     {
-//       "day": 1,
-//       "title": "Sample",
-//       "morning": "text",
-//       "afternoon": "text",
-//       "evening": "text",
-//       "places": ["place1"],
-//       "weather": "Sunny",
-//       "estimatedCost": 100
-//     }
-//   ],
-//   "totalEstimatedCost": 300,
-//   "tips": "text"
-// }
-// `;
 
 const { destination, days, people, budget, budgetAmount, interests } = tripData;
 const budgetStr = budgetAmount 
