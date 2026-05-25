@@ -1,5 +1,5 @@
 if (!process.env.GEOAPIFY_KEY) {
-  console.warn("⚠️  GEOAPIFY_KEY is not set — maps will not render");
+  console.warn("  GEOAPIFY_KEY is not set — maps will not render");
 }
 
 const express = require("express");
@@ -8,18 +8,20 @@ const { isLoggedIn, isLoggedInSoft } = require("../middleware");
 const Groq = require("groq-sdk");
 const axios = require("axios");
 const Itinerary = require("../models/itinerary");
-const ejs = require("ejs");
-const path = require("path");
+// const ejs = require("ejs");
+// const path = require("path");
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 
+// const render = (res, next, file, data) => {
+//   ejs.renderFile(path.join(__dirname, '../views', file), data, (err, html) => {
+//     if (err) return next(err);
+//     res.send(html);
+//   });
+// };
 const render = (res, next, file, data) => {
-  ejs.renderFile(path.join(__dirname, '../views', file), data, (err, html) => {
-    if (err) return next(err);
-    res.send(html);
-  });
+  res.render(file, data);
 };
-
 
 router.get("/plan", isLoggedInSoft, (req, res, next) => {
   render(res, next, 'trip/plan.ejs', { currUser: req.user || null });
