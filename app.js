@@ -57,12 +57,18 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: false,
 // CHANGE your cookie config inside sessionOptions
+  // cookie: {
+  //   maxAge: 7 * 24 * 60 * 60 * 1000,
+  //   httpOnly: true,
+  //  secure: process.env.NODE_ENV === 'production', // enables secure cookies on HTTPS
+  // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allows cross-request cookies
+  // },
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-   secure: process.env.NODE_ENV === 'production', // enables secure cookies on HTTPS
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allows cross-request cookies
-  },
+    secure: true,
+    sameSite: 'none',
+},
 };
 
 app.use(session(sessionOptions));
