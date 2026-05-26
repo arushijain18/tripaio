@@ -11,11 +11,8 @@ module.exports.signup = async (req, res, next) => {
     const registeredUser = await User.register(newUser, password);
     req.login(registeredUser, (err) => {
       if (err) return next(err);
-      req.session.save((err) => {
-        if (err) return next(err);
-        req.flash("success", "Welcome to TripAIO!");
-        res.redirect("/");
-      });
+      req.flash("success", "Welcome to TripAIO!");
+      res.redirect("/");
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -28,24 +25,15 @@ module.exports.renderLoginForm = (req, res) => {
 };
 
 module.exports.login = (req, res, next) => {
-  req.session.save((err) => {
-    if (err) return next(err);
-    req.flash("success", "Welcome back to TripAIO!");
-    let redirectUrl = res.locals.redirectUrl || "/";
-    res.redirect(redirectUrl);
-//     let redirectUrl = req.session.redirectUrl || "/listings";
-// delete req.session.redirectUrl;
-// res.redirect(redirectUrl);
-  });
+  req.flash("success", "Welcome back to TripAIO!");
+  let redirectUrl = res.locals.redirectUrl || "/";
+  res.redirect(redirectUrl);
 };
 
 module.exports.logout = (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
-    req.session.save((err) => {
-      if (err) return next(err);
-      req.flash("success", "You are logged out");
-      res.redirect("/");
-    });
+    req.flash("success", "You are logged out");
+    res.redirect("/");
   });
 };
