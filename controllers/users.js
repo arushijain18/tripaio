@@ -4,6 +4,21 @@ module.exports.renderSignupForm = (req, res) => {
   res.render("users/signup.ejs");
 };
 
+// module.exports.signup = async (req, res, next) => {
+//   try {
+//     let { username, email, password } = req.body;
+//     const newUser = new User({ email, username });
+//     const registeredUser = await User.register(newUser, password);
+//     req.login(registeredUser, (err) => {
+//       if (err) return next(err);
+//       req.flash("success", "Welcome to TripAIO!");
+//       res.redirect("/");
+//     });
+//   } catch (e) {
+//     req.flash("error", e.message);
+//     res.redirect("/signup");
+//   }
+// };
 module.exports.signup = async (req, res, next) => {
   try {
     let { username, email, password } = req.body;
@@ -11,8 +26,11 @@ module.exports.signup = async (req, res, next) => {
     const registeredUser = await User.register(newUser, password);
     req.login(registeredUser, (err) => {
       if (err) return next(err);
-      req.flash("success", "Welcome to TripAIO!");
-      res.redirect("/");
+      req.session.save((saveErr) => {
+        if (saveErr) return next(saveErr);
+        req.flash("success", "Welcome to TripAIO!");
+        res.redirect("/");
+      });
     });
   } catch (e) {
     req.flash("error", e.message);
@@ -24,10 +42,18 @@ module.exports.renderLoginForm = (req, res) => {
   res.render("users/login.ejs");
 };
 
+// module.exports.login = (req, res, next) => {
+//   req.flash("success", "Welcome back to TripAIO!");
+//   let redirectUrl = res.locals.redirectUrl || "/";
+//   res.redirect(redirectUrl);
+// };
 module.exports.login = (req, res, next) => {
-  req.flash("success", "Welcome back to TripAIO!");
-  let redirectUrl = res.locals.redirectUrl || "/";
-  res.redirect(redirectUrl);
+  req.session.save((err) => {
+    if (err) return next(err);
+    req.flash("success", "Welcome back to TripAIO!");
+    let redirectUrl = res.locals.redirectUrl || "/";
+    res.redirect(redirectUrl);
+  });
 };
 
 module.exports.logout = (req, res, next) => {
