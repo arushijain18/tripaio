@@ -3,7 +3,7 @@ const axios = require("axios");
 module.exports.generateItinerary = async (tripData) => {
 
 
-const { destination, days, people, budget, budgetAmount, interests } = tripData;
+const { destination, days, people, budget, budgetAmount, interests ,startDate, endDate } = tripData;
 const budgetStr = budgetAmount 
   ? `${budget} (total budget: ₹${Number(budgetAmount).toLocaleString('en-IN')})` 
   : budget;
@@ -12,6 +12,8 @@ You are a travel planner. Generate a realistic ${days}-day itinerary for ${peopl
 Budget level: ${budgetStr}.
 Interests: ${interests || 'general sightseeing'}.
 ${budgetAmount ? `The total trip budget is ₹${budgetAmount}. Make sure totalEstimatedCost stays within this amount and distribute costs across days accordingly.` : ''}
+Trip duration: exactly ${days} days${startDate ? ` (${startDate} to ${endDate})` : ''}.
+${budgetAmount ? `The total trip budget is ₹${budgetAmount}...` : ''}
 
 Return ONLY valid JSON in this exact format:
 {

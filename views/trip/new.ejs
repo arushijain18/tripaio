@@ -3,7 +3,23 @@
   <h3>Plan Your Trip ✈️</h3>
   <form action="/trip/generate-ai" method="POST" class="mt-4">
     <input type="text"   name="destination" placeholder="Destination (e.g. Bali)" class="form-control mb-3" required>
-    <input type="number" name="days"        placeholder="Number of days"           class="form-control mb-3" required>
+    <input type="date" name="startDate" id="startDate" class="form-control mb-3" min="<%= new Date().toISOString().split('T')[0] %>" required>
+<input type="date" name="endDate" id="endDate" class="form-control mb-3" required>
+<input type="hidden" name="days" id="days">
+<p id="dayInfo" class="text-muted mb-3" style="font-size:.85rem"></p>
+
+<script>
+  const s = document.getElementById('startDate');
+  const e = document.getElementById('endDate');
+  s.addEventListener('change', () => { e.min = s.value; calc(); });
+  e.addEventListener('change', calc);
+  function calc() {
+    if (!s.value || !e.value) return;
+    const d = Math.ceil((new Date(e.value) - new Date(s.value)) / 86400000);
+    document.getElementById('days').value = d;
+    document.getElementById('dayInfo').textContent = d > 0 ? `📅 ${d} day trip` : '⚠️ Invalid dates';
+  }
+</script>
     <input type="number" name="people"      placeholder="Number of people"         class="form-control mb-3" required>
     <input type="number" name="budget"      placeholder="Total budget in USD"      class="form-control mb-3" required>
     <input type="text"   name="interests"   placeholder="Interests (food, beach…)" class="form-control mb-3" required>
