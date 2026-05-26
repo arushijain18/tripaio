@@ -34,7 +34,7 @@ TripAIO brings together everything a traveler needs — destination discovery wi
 ## Tech Stack
 
 ```
-Frontend   EJS · CSS · JavaScript
+Frontend   HTML .EJS · CSS · JavaScript
 Backend    Node.js · Express.js
 Database   MongoDB · Mongoose
 Auth       Passport.js · Express Session
