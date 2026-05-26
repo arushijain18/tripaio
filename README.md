@@ -15,7 +15,7 @@
 
 ## Overview
 
-TripAIO brings together everything a traveler needs — destination discovery with interactive maps, personalized itinerary generation, group expense splitting, staycation bookings, and community reviews — all behind a secure, responsive interface.
+TripAIO (Trip All-In-One)brings together everything a traveler needs — destination discovery with interactive maps, personalized itinerary generation, group expense splitting, staycation bookings, and community reviews — all behind a secure, responsive interface.
 
 ---
 
