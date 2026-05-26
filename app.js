@@ -82,6 +82,11 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req, res, next) => {
+  console.log("REQ USER:", req.user);
+  console.log("SESSION:", req.session);
+  next();
+});
 
 // ── LOCALS ───────────────────────────────────
 
