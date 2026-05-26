@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="/css/theme.css">
 </head>
 <body>
-<div id="debug-user" data-user="<%= locals.currUser ? locals.currUser.username : 'NOBODY' %>" style="display:none"></div>
-
+<!-- <div id="debug-user" data-user="<%= locals.currUser ? locals.currUser.username : 'NOBODY' %>" style="display:none"></div> -->
+<div id="debug-user" data-user="<%= currUser ? currUser.username : 'NOBODY' %>" style="display:none"></div>
   <!-- NAVBAR -->
 <nav class="home-nav" id="nav">
   <a href="/" class="logo">TRIPAIO</a>
@@ -29,7 +29,7 @@
     <a href="/trip/budget">Budget</a>
   </div>
   <div class="nav-auth" id="navAuth">
-<% if(locals.currUser) { %>
+<% if(currUser) { %>
   <a href="/listings">Hi, <%= currUser.username %></a>
   <a href="/logout" class="btn-getstarted">Logout</a>
 <% } else { %>
