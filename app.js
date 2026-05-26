@@ -116,7 +116,10 @@ app.get("/", async (req, res, next) => {
     console.log("HOME ROUTE - req.user:", req.user);
     console.log("HOME ROUTE - session:", req.session);
     const featured = await Listing.aggregate([{ $sample: { size: 3 } }]);
-    res.render("home.ejs", { featured });
+    res.render("home.ejs", { 
+      featured ,
+      currUser: req.user || null
+    });
   } catch(err) {
     next(err);
   }
