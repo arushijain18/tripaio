@@ -102,11 +102,21 @@ app.get('/favicon.ico', (req, res) => res.status(204).end());
 // ── ROOT ROUTE ───────────────────────────────
 
 // NEW - REPLACE WITH THIS
+// app.get("/", async (req, res, next) => {
+//   try {
+//     const featured = await Listing.aggregate([{ $sample: { size: 3 } }]);
+//     const highlight = req.flash("highlight")[0];
+//     res.render("home.ejs", { featured, highlight });
+//   } catch(err) {
+//     next(err);
+//   }
+// });
 app.get("/", async (req, res, next) => {
   try {
+    console.log("HOME ROUTE - req.user:", req.user);
+    console.log("HOME ROUTE - session:", req.session);
     const featured = await Listing.aggregate([{ $sample: { size: 3 } }]);
-    const highlight = req.flash("highlight")[0];
-    res.render("home.ejs", { featured, highlight });
+    res.render("home.ejs", { featured });
   } catch(err) {
     next(err);
   }
