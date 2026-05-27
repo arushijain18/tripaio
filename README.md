@@ -99,6 +99,6 @@ Hosted on **Render** — auto-deploys on every push to `main`.
 
 <div align="center">
 
-Made by [Arushi Jain](https://github.com/arushijain18)
+Made by [Arushi Jain,Argha Dhakad](https://github.com/arushijain18)
 
 </div>
